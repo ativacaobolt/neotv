@@ -4,22 +4,35 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ativação de Dispositivo — Ativação Bolt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-1: #0b0f1a;
-    --bg-2: #121a2b;
-    --panel: #161f33;
-    --panel-border: #253252;
-    --text: #e8ecf7;
-    --text-dim: #93a0bf;
-    --accent: #f5a623;
-    --accent-2: #ff6a3d;
-    --ok: #35d08c;
-    --err: #ff5d6c;
-    --radius: 18px;
+    --bg-1: #060a16;
+    --bg-2: #0a1226;
+    --panel: #0f1830;
+    --panel-2: #0a1324;
+    --border: #1f2c4d;
+    --border-soft: #182440;
+    --text: #edf1fc;
+    --text-dim: #8d9ac2;
+    --text-faint: #566090;
+    --accent-1: #3d8bff;
+    --accent-2: #2f5ef5;
+    --accent-3: #7c5cff;
+    --ok: #32d998;
+    --ok-bg: rgba(50, 217, 152, .1);
+    --err: #ff5570;
+    --err-bg: rgba(255, 85, 112, .1);
+    --radius-lg: 20px;
+    --radius-md: 13px;
+    --ease: cubic-bezier(.22, 1, .36, 1);
   }
 
   * { box-sizing: border-box; }
+
+  html, body { height: 100%; }
 
   body {
     margin: 0;
@@ -28,92 +41,166 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    font-family: "Inter", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
     color: var(--text);
-    background:
-      radial-gradient(900px 500px at 15% -10%, rgba(245, 166, 35, .18), transparent 60%),
-      radial-gradient(900px 500px at 110% 10%, rgba(255, 106, 61, .14), transparent 60%),
-      linear-gradient(180deg, var(--bg-1), var(--bg-2));
+    background: var(--bg-1);
+    overflow: hidden;
+    position: relative;
   }
 
+  /* ── Fundo animado ── */
+  .aurora {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+  }
+
+  .aurora span {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: .5;
+    will-change: transform;
+  }
+
+  .aurora span.a1 {
+    width: 560px; height: 560px;
+    top: -220px; left: -160px;
+    background: radial-gradient(circle at 30% 30%, var(--accent-1), transparent 70%);
+    animation: drift1 22s var(--ease) infinite alternate;
+  }
+
+  .aurora span.a2 {
+    width: 620px; height: 620px;
+    bottom: -260px; right: -200px;
+    background: radial-gradient(circle at 60% 60%, var(--accent-3), transparent 70%);
+    animation: drift2 26s var(--ease) infinite alternate;
+  }
+
+  .aurora span.a3 {
+    width: 420px; height: 420px;
+    top: 40%; left: 60%;
+    background: radial-gradient(circle, var(--accent-2), transparent 70%);
+    opacity: .3;
+    animation: drift3 30s var(--ease) infinite alternate;
+  }
+
+  @keyframes drift1 { to { transform: translate(60px, 80px) scale(1.08); } }
+  @keyframes drift2 { to { transform: translate(-50px, -70px) scale(1.1); } }
+  @keyframes drift3 { to { transform: translate(-80px, 40px) scale(.92); } }
+
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: .4;
+  }
+
+  /* ── Painel ── */
   .panel {
+    position: relative;
+    z-index: 2;
     width: 100%;
-    max-width: 420px;
-    background: var(--panel);
-    border: 1px solid var(--panel-border);
-    border-radius: var(--radius);
-    padding: 32px 28px 28px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    max-width: 426px;
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 34px 30px 30px;
+    box-shadow:
+      0 30px 80px -20px rgba(0,0,0,.6),
+      0 0 0 1px rgba(255,255,255,.02) inset;
+    animation: panelIn .6s var(--ease) both;
+  }
+
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(22px) scale(.98); }
+    to   { opacity: 1; transform: none; }
   }
 
   .brand {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 22px;
+    gap: 13px;
+    margin-bottom: 26px;
   }
 
   .brand-mark {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 46px;
+    height: 46px;
+    flex: none;
+    border-radius: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    box-shadow: 0 8px 20px rgba(245,166,35,.35);
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+    box-shadow: 0 10px 24px -6px rgba(61, 139, 255, .5);
+    animation: glow 3.2s ease-in-out infinite;
   }
 
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 10px 24px -6px rgba(61, 139, 255, .5); }
+    50%      { box-shadow: 0 10px 32px -4px rgba(124, 92, 255, .7); }
+  }
+
+  .brand-mark svg { width: 22px; height: 22px; }
+
   .brand-title {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 17px;
-    letter-spacing: .2px;
+    letter-spacing: -.1px;
   }
 
   .brand-sub {
     font-size: 12px;
     color: var(--text-dim);
+    margin-top: 1px;
   }
 
+  /* ── Indicador de etapas ── */
   .progress {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 0 0 22px;
+    gap: 10px;
+    margin: 0 0 26px;
   }
 
   .progress .dot {
-    width: 26px;
-    height: 26px;
+    width: 27px;
+    height: 27px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
     font-weight: 700;
-    background: #1d2742;
-    color: var(--text-dim);
-    border: 1px solid var(--panel-border);
-    transition: all .25s ease;
+    background: var(--panel-2);
+    color: var(--text-faint);
+    border: 1px solid var(--border);
+    transition: all .35s var(--ease);
   }
 
   .progress .dot.active {
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    color: #1a1304;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #051024;
     border-color: transparent;
+    transform: scale(1.06);
   }
 
   .progress .dot.done {
     background: var(--ok);
-    color: #06220f;
+    color: #06281a;
     border-color: transparent;
   }
 
   .progress .line {
     flex: 1;
     height: 2px;
-    background: var(--panel-border);
+    background: var(--border-soft);
     border-radius: 2px;
     overflow: hidden;
   }
@@ -122,81 +209,138 @@
     display: block;
     height: 100%;
     width: 0%;
-    background: var(--ok);
-    transition: width .3s ease;
+    background: linear-gradient(90deg, var(--accent-1), var(--ok));
+    transition: width .5s var(--ease);
   }
 
-  .progress .label {
-    font-size: 11px;
-    color: var(--text-dim);
-  }
-
+  /* ── Etapas ── */
   .step { display: none; }
-  .step.show { display: block; animation: rise .35s ease; }
+  .step.show { display: block; animation: rise .45s var(--ease) both; }
 
   @keyframes rise {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .field { animation: fieldIn .45s var(--ease) both; }
+  .field:nth-of-type(1) { animation-delay: .03s; }
+  .field:nth-of-type(2) { animation-delay: .09s; }
+
+  @keyframes fieldIn {
+    from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: none; }
   }
 
   label {
     display: block;
-    font-size: 13px;
+    font-size: 12.5px;
+    font-weight: 500;
     color: var(--text-dim);
-    margin: 14px 0 6px;
+    margin: 16px 0 7px;
+  }
+
+  .input-wrap { position: relative; }
+
+  .input-wrap svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 17px;
+    height: 17px;
+    color: var(--text-faint);
+    transition: color .2s ease;
+    pointer-events: none;
   }
 
   input[type="text"], input[type="password"] {
     width: 100%;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--panel-border);
-    background: #0f1626;
+    padding: 13px 14px 13px 40px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--panel-2);
     color: var(--text);
+    font-family: inherit;
     font-size: 14px;
     outline: none;
-    transition: border-color .15s ease, box-shadow .15s ease;
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
   }
+
+  input::placeholder { color: var(--text-faint); }
 
   input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(245,166,35,.15);
+    border-color: var(--accent-1);
+    background: #0c1527;
+    box-shadow: 0 0 0 4px rgba(61, 139, 255, .14);
   }
 
-  input.shake { animation: shake .35s ease; border-color: var(--err); }
+  input:focus ~ svg { color: var(--accent-1); }
+
+  input.shake { animation: shake .4s ease; border-color: var(--err); }
 
   @keyframes shake {
-    25% { transform: translateX(-4px); }
-    75% { transform: translateX(4px); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
   }
 
+  /* ── Botões ── */
   .btn {
+    position: relative;
+    overflow: hidden;
     width: 100%;
-    margin-top: 20px;
-    padding: 13px 16px;
+    margin-top: 22px;
+    padding: 14px 16px;
     border: none;
-    border-radius: 12px;
-    font-size: 14px;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 14.5px;
     font-weight: 700;
-    color: #1a1304;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    letter-spacing: .1px;
+    color: #051024;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    transition: transform .15s ease, opacity .15s ease;
+    gap: 9px;
+    transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+    box-shadow: 0 14px 30px -12px rgba(61, 139, 255, .55);
   }
 
-  .btn:hover { transform: translateY(-1px); }
-  .btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+  .btn svg { width: 17px; height: 17px; }
+
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.35) 48%, transparent 66%);
+    transform: translateX(-120%);
+    transition: transform .6s ease;
+  }
+
+  .btn:hover::before { transform: translateX(120%); }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 34px -10px rgba(61, 139, 255, .65); }
+  .btn:active { transform: translateY(0); }
+  .btn:disabled { opacity: .62; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn:disabled::before { display: none; }
+
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,.45);
+    transform: scale(0);
+    animation: rippleFx .6s ease-out;
+    pointer-events: none;
+  }
+
+  @keyframes rippleFx { to { transform: scale(2.6); opacity: 0; } }
 
   .spinner {
-    width: 14px;
-    height: 14px;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
-    border: 2px solid rgba(26,19,4,.35);
-    border-top-color: #1a1304;
+    border: 2px solid rgba(5,16,36,.3);
+    border-top-color: #051024;
     display: none;
     animation: spin .7s linear infinite;
   }
@@ -205,64 +349,93 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* ── Mensagens ── */
   .msg {
-    margin-top: 14px;
-    padding: 11px 13px;
-    border-radius: 10px;
+    margin-top: 15px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
     font-size: 13px;
+    line-height: 1.4;
     display: none;
     align-items: flex-start;
-    gap: 8px;
+    gap: 9px;
   }
 
-  .msg.show { display: flex; }
-  .msg.ok  { background: rgba(53,208,140,.12); color: var(--ok); border: 1px solid rgba(53,208,140,.3); }
-  .msg.err { background: rgba(255,93,108,.12); color: var(--err); border: 1px solid rgba(255,93,108,.3); }
+  .msg.show { display: flex; animation: rise .3s var(--ease) both; }
+  .msg svg { width: 17px; height: 17px; flex: none; margin-top: 1px; }
+  .msg.ok  { background: var(--ok-bg);  color: var(--ok);  border: 1px solid rgba(50, 217, 152, .25); }
+  .msg.err { background: var(--err-bg); color: var(--err); border: 1px solid rgba(255, 85, 112, .25); }
 
+  /* ── Identidade confirmada ── */
   .identity {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: #0f1626;
-    border: 1px solid var(--panel-border);
-    margin-bottom: 4px;
+    gap: 11px;
+    padding: 11px 13px;
+    border-radius: var(--radius-md);
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    margin-bottom: 2px;
   }
 
   .identity .avatar {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    background: var(--panel-border);
+    flex: none;
+    background: linear-gradient(135deg, var(--border-soft), var(--border));
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
   }
 
+  .identity .avatar svg { width: 17px; height: 17px; color: var(--text-dim); }
+
   .identity .who { flex: 1; min-width: 0; }
-  .identity .who strong { display: block; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .identity .who span { font-size: 11px; color: var(--text-dim); }
+  .identity .who strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .identity .who span { font-size: 11.5px; color: var(--text-dim); }
 
   .link-btn {
     background: none;
     border: none;
-    color: var(--accent);
+    color: var(--accent-1);
     font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
-    text-decoration: underline;
+    padding: 6px 4px;
+    transition: opacity .15s ease;
   }
+
+  .link-btn:hover { opacity: .75; }
 </style>
 </head>
 <body>
 
-<div class="panel">
+<div class="aurora" aria-hidden="true">
+  <span class="a1"></span>
+  <span class="a2"></span>
+  <span class="a3"></span>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<main class="panel" id="panel">
   <div class="brand">
-    <div class="brand-mark">⚡</div>
+    <div class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#051024" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 2 3 14 11 14 10 22 21 10 13 10 13 2"></polygon>
+      </svg>
+    </div>
     <div>
       <div class="brand-title">Ativação Bolt</div>
-      <div class="brand-sub">Ative seu dispositivo em segundos</div>
+      <div class="brand-sub">Ative seu dispositivo em instantes</div>
     </div>
   </div>
 
@@ -274,39 +447,91 @@
 
   <!-- Etapa 1: credenciais -->
   <div class="step show" id="step1">
-    <label for="usuario">Usuário</label>
-    <input type="text" id="usuario" autocomplete="off" spellcheck="false" placeholder="Seu usuário de acesso">
+    <div class="field">
+      <label for="usuario">Usuário</label>
+      <div class="input-wrap">
+        <input type="text" id="usuario" autocomplete="off" spellcheck="false" placeholder="Seu usuário de acesso">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
+    </div>
 
-    <label for="senha">Senha</label>
-    <input type="password" id="senha" autocomplete="new-password" placeholder="••••••••">
+    <div class="field">
+      <label for="senha">Senha</label>
+      <div class="input-wrap">
+        <input type="password" id="senha" autocomplete="new-password" placeholder="••••••••">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+    </div>
 
-    <button class="btn" id="btnAvancar" type="button">Continuar →</button>
+    <button class="btn" id="btnAvancar" type="button">
+      <span>Continuar</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </button>
 
-    <div class="msg" id="msg1"><span>⚠️</span><span id="msg1-text"></span></div>
+    <div class="msg" id="msg1">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <span id="msg1-text"></span>
+    </div>
   </div>
 
   <!-- Etapa 2: dispositivo -->
   <div class="step" id="step2">
     <div class="identity">
-      <div class="avatar">👤</div>
+      <div class="avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
       <div class="who">
         <strong id="nomeUsuario">—</strong>
         <span>Credenciais confirmadas</span>
       </div>
-      <button class="link-btn" id="btnVoltar" type="button">alterar</button>
+      <button class="link-btn" id="btnVoltar" type="button">Alterar</button>
     </div>
 
-    <label for="mac">Endereço MAC do dispositivo</label>
-    <input type="text" id="mac" placeholder="00:1A:2B:3C:4D:5E" maxlength="17" autocomplete="off" spellcheck="false">
+    <div class="field" style="margin-top:4px">
+      <label for="mac">Endereço MAC do dispositivo</label>
+      <div class="input-wrap">
+        <input type="text" id="mac" placeholder="00:1A:2B:3C:4D:5E" maxlength="17" autocomplete="off" spellcheck="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+          <path d="M7 15h0M12 15h0M17 15h0"></path>
+          <path d="M6 9h12"></path>
+        </svg>
+      </div>
+    </div>
 
     <button class="btn" id="btnAtivar" type="button">
       <span class="spinner" id="spinner"></span>
-      <span id="btnAtivarLabel">⚡ Ativar dispositivo</span>
+      <svg id="btnAtivarIcon" viewBox="0 0 24 24" fill="none" stroke="#051024" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 2 3 14 11 14 10 22 21 10 13 10 13 2"></polygon>
+      </svg>
+      <span id="btnAtivarLabel">Ativar dispositivo</span>
     </button>
 
-    <div class="msg" id="msg2"><span id="msg2-icon">✅</span><span id="msg2-text"></span></div>
+    <div class="msg" id="msg2">
+      <svg id="msg2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <span id="msg2-text"></span>
+    </div>
   </div>
-</div>
+</main>
 
 <script>
   // Credenciais da parceria. Ficam só aqui no código-fonte, nunca exibidas
@@ -320,6 +545,9 @@
 </script>
 <script>
 (function () {
+  const ICON_OK  = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+  const ICON_ERR = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
+
   const usuarioEl = document.getElementById('usuario');
   const senhaEl   = document.getElementById('senha');
   const macEl     = document.getElementById('mac');
@@ -343,7 +571,7 @@
     el.classList.remove('ok', 'err', 'show');
     void el.offsetWidth;
     el.classList.add(tipo, 'show');
-    if (iconoEl) iconoEl.textContent = tipo === 'ok' ? '✅' : '❌';
+    if (iconoEl) iconoEl.innerHTML = tipo === 'ok' ? ICON_OK : ICON_ERR;
     el.querySelector('span:last-child').textContent = texto;
   }
 
@@ -353,16 +581,29 @@
 
   function marcarInvalido(el) {
     el.classList.add('shake');
-    setTimeout(() => el.classList.remove('shake'), 350);
+    setTimeout(() => el.classList.remove('shake'), 400);
   }
 
-  document.getElementById('btnAvancar').addEventListener('click', () => {
+  function addRipple(btn, e) {
+    const r = btn.getBoundingClientRect();
+    const size = Math.max(r.width, r.height);
+    const el = document.createElement('span');
+    el.className = 'ripple';
+    el.style.width = el.style.height = size + 'px';
+    el.style.left = (e.clientX - r.left - size / 2) + 'px';
+    el.style.top = (e.clientY - r.top - size / 2) + 'px';
+    btn.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+
+  document.getElementById('btnAvancar').addEventListener('click', (e) => {
+    addRipple(e.currentTarget, e);
     const usuario = usuarioEl.value.trim();
     const senha = senhaEl.value.trim();
     const msg1 = document.getElementById('msg1');
 
     if (!usuario || !senha) {
-      mostrarMsg(msg1, 'err', 'Preencha usuário e senha.');
+      mostrarMsg(msg1, 'err', 'Preencha usuário e senha.', msg1.querySelector('svg'));
       if (!usuario) marcarInvalido(usuarioEl);
       if (!senha) marcarInvalido(senhaEl);
       return;
@@ -395,7 +636,8 @@
     usuarioEl.focus();
   });
 
-  document.getElementById('btnAtivar').addEventListener('click', async () => {
+  document.getElementById('btnAtivar').addEventListener('click', async (e) => {
+    addRipple(e.currentTarget, e);
     const usuario = usuarioEl.value.trim();
     const senha = senhaEl.value.trim();
     const mac = macEl.value.trim();
@@ -412,10 +654,12 @@
 
     const btn = document.getElementById('btnAtivar');
     const spinner = document.getElementById('spinner');
+    const icon = document.getElementById('btnAtivarIcon');
     const label = document.getElementById('btnAtivarLabel');
 
     btn.disabled = true;
     spinner.classList.add('on');
+    icon.style.display = 'none';
     label.textContent = 'Ativando...';
 
     try {
@@ -444,7 +688,8 @@
 
     btn.disabled = false;
     spinner.classList.remove('on');
-    label.textContent = '⚡ Ativar dispositivo';
+    icon.style.display = '';
+    label.textContent = 'Ativar dispositivo';
   });
 
   document.addEventListener('keydown', (e) => {
