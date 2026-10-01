@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ativação de Dispositivo — Ativação Bolt</title>
+<style>
+  :root {
+    --bg-1: #0b0f1a;
+    --bg-2: #121a2b;
+    --panel: #161f33;
+    --panel-border: #253252;
+    --text: #e8ecf7;
+    --text-dim: #93a0bf;
+    --accent: #f5a623;
+    --accent-2: #ff6a3d;
+    --ok: #35d08c;
+    --err: #ff5d6c;
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(900px 500px at 15% -10%, rgba(245, 166, 35, .18), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(255, 106, 61, .14), transparent 60%),
+      linear-gradient(180deg, var(--bg-1), var(--bg-2));
+  }
+
+  .panel {
+    width: 100%;
+    max-width: 420px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius);
+    padding: 32px 28px 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 8px 20px rgba(245,166,35,.35);
+  }
+
+  .brand-title {
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .2px;
+  }
+
+  .brand-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 22px;
+  }
+
+  .progress .dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: #1d2742;
+    color: var(--text-dim);
+    border: 1px solid var(--panel-border);
+    transition: all .25s ease;
+  }
+
+  .progress .dot.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #1a1304;
+    border-color: transparent;
+  }
+
+  .progress .dot.done {
+    background: var(--ok);
+    color: #06220f;
+    border-color: transparent;
+  }
+
+  .progress .line {
+    flex: 1;
+    height: 2px;
+    background: var(--panel-border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress .line > span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--ok);
+    transition: width .3s ease;
+  }
+
+  .progress .label {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .step { display: none; }
+  .step.show { display: block; animation: rise .35s ease; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 14px 0 6px;
+  }
+
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--panel-border);
+    background: #0f1626;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(245,166,35,.15);
+  }
+
+  input.shake { animation: shake .35s ease; border-color: var(--err); }
+
+  @keyframes shake {
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  .btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 13px 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1304;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+  .spinner {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(26,19,4,.35);
+    border-top-color: #1a1304;
+    display: none;
+    animation: spin .7s linear infinite;
+  }
+
+  .spinner.on { display: inline-block; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .msg {
+    margin-top: 14px;
+    padding: 11px 13px;
+    border-radius: 10px;
+    font-size: 13px;
+    display: none;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .msg.show { display: flex; }
+  .msg.ok  { background: rgba(53,208,140,.12); color: var(--ok); border: 1px solid rgba(53,208,140,.3); }
+  .msg.err { background: rgba(255,93,108,.12); color: var(--err); border: 1px solid rgba(255,93,108,.3); }
+
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #0f1626;
+    border: 1px solid var(--panel-border);
+    margin-bottom: 4px;
+  }
+
+  .identity .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--panel-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+  }
+
+  .identity .who { flex: 1; min-width: 0; }
+  .identity .who strong { display: block; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .identity .who span { font-size: 11px; color: var(--text-dim); }
+
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <div class="brand">
+    <div class="brand-mark">⚡</div>
+    <div>
+      <div class="brand-title">Ativação Bolt</div>
+      <div class="brand-sub">Ative seu dispositivo em segundos</div>
+    </div>
+  </div>
+
+  <div class="progress">
+    <div class="dot active" id="dot1">1</div>
+    <div class="line"><span id="lineFill"></span></div>
+    <div class="dot" id="dot2">2</div>
+  </div>
+
+  <!-- Etapa 1: credenciais -->
+  <div class="step show" id="step1">
+    <label for="usuario">Usuário</label>
+    <input type="text" id="usuario" autocomplete="off" spellcheck="false" placeholder="Seu usuário de acesso">
+
+    <label for="senha">Senha</label>
+    <input type="password" id="senha" autocomplete="new-password" placeholder="••••••••">
+
+    <button class="btn" id="btnAvancar" type="button">Continuar →</button>
+
+    <div class="msg" id="msg1"><span>⚠️</span><span id="msg1-text"></span></div>
+  </div>
+
+  <!-- Etapa 2: dispositivo -->
+  <div class="step" id="step2">
+    <div class="identity">
+      <div class="avatar">👤</div>
+      <div class="who">
+        <strong id="nomeUsuario">—</strong>
+        <span>Credenciais confirmadas</span>
+      </div>
+      <button class="link-btn" id="btnVoltar" type="button">alterar</button>
+    </div>
+
+    <label for="mac">Endereço MAC do dispositivo</label>
+    <input type="text" id="mac" placeholder="00:1A:2B:3C:4D:5E" maxlength="17" autocomplete="off" spellcheck="false">
+
+    <button class="btn" id="btnAtivar" type="button">
+      <span class="spinner" id="spinner"></span>
+      <span id="btnAtivarLabel">⚡ Ativar dispositivo</span>
+    </button>
+
+    <div class="msg" id="msg2"><span id="msg2-icon">✅</span><span id="msg2-text"></span></div>
+  </div>
+</div>
+
+<script>
+  // Credenciais da parceria. Ficam só aqui no código-fonte, nunca exibidas
+  // na interface (tela, mensagens, console) — mas não são um segredo
+  // criptográfico: qualquer um com acesso ao arquivo consegue lê-las.
+  window.PARCERIA = {
+    endpoint: 'https://boltplayapp.com.br/parceria/ativar',
+    codigo: 'titan',
+    token: 'UHh2NsIllE8H.58956102fd98d9f0'
+  };
+</script>
+<script>
+(function () {
+  const usuarioEl = document.getElementById('usuario');
+  const senhaEl   = document.getElementById('senha');
+  const macEl     = document.getElementById('mac');
+
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const dot1  = document.getElementById('dot1');
+  const dot2  = document.getElementById('dot2');
+  const lineFill = document.getElementById('lineFill');
+
+  function formatarMac(valor) {
+    const limpo = valor.replace(/[^a-fA-F0-9]/g, '').toUpperCase().slice(0, 12);
+    return limpo.match(/.{1,2}/g)?.join(':') || limpo;
+  }
+
+  macEl.addEventListener('input', () => {
+    macEl.value = formatarMac(macEl.value);
+  });
+
+  function mostrarMsg(el, tipo, texto, iconoEl) {
+    el.classList.remove('ok', 'err', 'show');
+    void el.offsetWidth;
+    el.classList.add(tipo, 'show');
+    if (iconoEl) iconoEl.textContent = tipo === 'ok' ? '✅' : '❌';
+    el.querySelector('span:last-child').textContent = texto;
+  }
+
+  function limparMsg(el) {
+    el.classList.remove('show', 'ok', 'err');
+  }
+
+  function marcarInvalido(el) {
+    el.classList.add('shake');
+    setTimeout(() => el.classList.remove('shake'), 350);
+  }
+
+  document.getElementById('btnAvancar').addEventListener('click', () => {
+    const usuario = usuarioEl.value.trim();
+    const senha = senhaEl.value.trim();
+    const msg1 = document.getElementById('msg1');
+
+    if (!usuario || !senha) {
+      mostrarMsg(msg1, 'err', 'Preencha usuário e senha.');
+      if (!usuario) marcarInvalido(usuarioEl);
+      if (!senha) marcarInvalido(senhaEl);
+      return;
+    }
+
+    limparMsg(msg1);
+    document.getElementById('nomeUsuario').textContent = usuario;
+
+    step1.classList.remove('show');
+    step2.classList.add('show');
+    dot1.classList.add('done');
+    dot1.textContent = '✓';
+    dot2.classList.add('active');
+    lineFill.style.width = '100%';
+
+    macEl.focus();
+  });
+
+  document.getElementById('btnVoltar').addEventListener('click', () => {
+    limparMsg(document.getElementById('msg2'));
+    macEl.value = '';
+
+    step2.classList.remove('show');
+    step1.classList.add('show');
+    dot1.classList.remove('done');
+    dot1.textContent = '1';
+    dot2.classList.remove('active');
+    lineFill.style.width = '0%';
+
+    usuarioEl.focus();
+  });
+
+  document.getElementById('btnAtivar').addEventListener('click', async () => {
+    const usuario = usuarioEl.value.trim();
+    const senha = senhaEl.value.trim();
+    const mac = macEl.value.trim();
+    const msg2 = document.getElementById('msg2');
+    const msg2icon = document.getElementById('msg2-icon');
+
+    if (!mac) {
+      mostrarMsg(msg2, 'err', 'Informe o endereço MAC do dispositivo.', msg2icon);
+      marcarInvalido(macEl);
+      return;
+    }
+
+    limparMsg(msg2);
+
+    const btn = document.getElementById('btnAtivar');
+    const spinner = document.getElementById('spinner');
+    const label = document.getElementById('btnAtivarLabel');
+
+    btn.disabled = true;
+    spinner.classList.add('on');
+    label.textContent = 'Ativando...';
+
+    try {
+      const resp = await fetch(window.PARCERIA.endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario,
+          senha,
+          mac,
+          codigo: window.PARCERIA.codigo,
+          token: window.PARCERIA.token
+        })
+      });
+      const dados = await resp.json();
+
+      if (dados.ok) {
+        mostrarMsg(msg2, 'ok', dados.mensagem || 'Dispositivo ativado com sucesso.', msg2icon);
+        macEl.value = '';
+      } else {
+        mostrarMsg(msg2, 'err', dados.mensagem || 'Não foi possível ativar o dispositivo.', msg2icon);
+      }
+    } catch (e) {
+      mostrarMsg(msg2, 'err', 'Erro ao comunicar com o servidor.', msg2icon);
+    }
+
+    btn.disabled = false;
+    spinner.classList.remove('on');
+    label.textContent = '⚡ Ativar dispositivo';
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    if (step1.classList.contains('show')) document.getElementById('btnAvancar').click();
+    else if (step2.classList.contains('show')) document.getElementById('btnAtivar').click();
+  });
+})();
+</script>
+
+</body>
+</html>
