@@ -6,509 +6,403 @@
 <title>Ativação de Dispositivo — Ativação Bolt</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
-    --bg-1: #060a16;
-    --bg-2: #0a1226;
-    --panel: #0f1830;
-    --panel-2: #0a1324;
-    --border: #1f2c4d;
-    --border-soft: #182440;
-    --text: #edf1fc;
-    --text-dim: #8d9ac2;
-    --text-faint: #566090;
-    --accent-1: #3d8bff;
-    --accent-2: #2f5ef5;
-    --accent-3: #7c5cff;
-    --ok: #32d998;
-    --ok-bg: rgba(50, 217, 152, .1);
-    --err: #ff5570;
-    --err-bg: rgba(255, 85, 112, .1);
-    --radius-lg: 20px;
-    --radius-md: 13px;
-    --ease: cubic-bezier(.22, 1, .36, 1);
+    --p1: #3d8bff;
+    --p2: #7c5cff;
+    --ok: #22c55e;
+    --err: #ef4444;
+    --text: #f0f4ff;
+    --sub: #8896b3;
+    --border: rgba(255,255,255,.08);
+    --ibg: rgba(255,255,255,.04);
   }
 
-  * { box-sizing: border-box; }
-
-  html, body { height: 100%; }
-
   body {
-    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #070910;
+    color: var(--text);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
-    font-family: "Inter", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
-    color: var(--text);
-    background: var(--bg-1);
+    padding: 20px;
     overflow: hidden;
     position: relative;
   }
 
-  /* ── Fundo animado ── */
-  .aurora {
+  /* ── FUNDO ── */
+  .blob { position: fixed; border-radius: 50%; filter: blur(100px); pointer-events: none; z-index: 0; }
+  .b1 { width: 560px; height: 560px; background: radial-gradient(circle, rgba(61,139,255,.28), transparent 65%); top: -160px; left: -140px; animation: drift1 12s ease-in-out infinite alternate; }
+  .b2 { width: 480px; height: 480px; background: radial-gradient(circle, rgba(124,92,255,.24), transparent 65%); bottom: -100px; right: -100px; animation: drift2 14s ease-in-out infinite alternate; }
+  .b3 { width: 320px; height: 320px; background: radial-gradient(circle, rgba(14,165,233,.18), transparent 65%); top: 45%; left: 55%; animation: drift3 10s ease-in-out infinite alternate; }
+  @keyframes drift1 { to { transform: translate(30px, 20px); } }
+  @keyframes drift2 { to { transform: translate(-25px, -30px); } }
+  @keyframes drift3 { to { transform: translate(-20px, 25px); } }
+
+  body::after {
+    content: '';
     position: fixed;
     inset: 0;
     z-index: 0;
-    overflow: hidden;
-    background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
-  }
-
-  .aurora span {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(90px);
-    opacity: .5;
-    will-change: transform;
-  }
-
-  .aurora span.a1 {
-    width: 560px; height: 560px;
-    top: -220px; left: -160px;
-    background: radial-gradient(circle at 30% 30%, var(--accent-1), transparent 70%);
-    animation: drift1 22s var(--ease) infinite alternate;
-  }
-
-  .aurora span.a2 {
-    width: 620px; height: 620px;
-    bottom: -260px; right: -200px;
-    background: radial-gradient(circle at 60% 60%, var(--accent-3), transparent 70%);
-    animation: drift2 26s var(--ease) infinite alternate;
-  }
-
-  .aurora span.a3 {
-    width: 420px; height: 420px;
-    top: 40%; left: 60%;
-    background: radial-gradient(circle, var(--accent-2), transparent 70%);
-    opacity: .3;
-    animation: drift3 30s var(--ease) infinite alternate;
-  }
-
-  @keyframes drift1 { to { transform: translate(60px, 80px) scale(1.08); } }
-  @keyframes drift2 { to { transform: translate(-50px, -70px) scale(1.1); } }
-  @keyframes drift3 { to { transform: translate(-80px, 40px) scale(.92); } }
-
-  .grain {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
+    background-image:
+      linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+    background-size: 50px 50px;
     pointer-events: none;
-    background-image: radial-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
-    background-size: 3px 3px;
-    opacity: .4;
   }
 
-  /* ── Painel ── */
-  .panel {
+  /* ── CARTÃO ── */
+  .card {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     width: 100%;
-    max-width: 426px;
-    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    max-width: 420px;
+    background: rgba(12,15,24,.8);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 34px 30px 30px;
+    border-radius: 26px;
+    padding: 40px 36px;
     box-shadow:
-      0 30px 80px -20px rgba(0,0,0,.6),
-      0 0 0 1px rgba(255,255,255,.02) inset;
-    animation: panelIn .6s var(--ease) both;
+      0 0 0 1px rgba(255,255,255,.045),
+      0 40px 100px rgba(0,0,0,.65),
+      0 0 80px rgba(61,139,255,.08);
+    overflow: hidden;
+    animation: cardIn .6s cubic-bezier(.22,1,.36,1) both;
   }
 
-  @keyframes panelIn {
+  @keyframes cardIn {
     from { opacity: 0; transform: translateY(22px) scale(.98); }
     to   { opacity: 1; transform: none; }
   }
 
-  .brand {
-    margin-bottom: 24px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-soft);
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 32px; right: 32px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(61,139,255,.7), rgba(124,92,255,.7), transparent);
   }
 
-  .brand-title {
+  /* ── CABEÇALHO ── */
+  .header { text-align: center; margin-bottom: 28px; }
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--sub);
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+  }
+  .title {
+    margin-top: 8px;
+    font-size: 21px;
     font-weight: 800;
-    font-size: 20px;
     letter-spacing: -.2px;
-    background: linear-gradient(135deg, var(--text), var(--accent-1));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
   }
 
-  .brand-sub {
-    font-size: 12.5px;
-    color: var(--text-dim);
-    margin-top: 4px;
+  /* ── ETAPAS ── */
+  .steps { display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
+  .step-item { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
+  .step-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    border: 2px solid rgba(255,255,255,.1); color: var(--sub);
+    background: transparent; position: relative; z-index: 1;
+    transition: all .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  .step-item.active .step-circle {
+    border-color: var(--p1); color: #fff;
+    background: linear-gradient(135deg, var(--p1), var(--p2));
+    box-shadow: 0 0 0 4px rgba(61,139,255,.18), 0 0 20px rgba(61,139,255,.4);
+    transform: scale(1.08);
+  }
+  .step-item.done .step-circle {
+    border-color: var(--ok); color: #fff; background: var(--ok);
+    box-shadow: 0 0 0 4px rgba(34,197,94,.15), 0 0 18px rgba(34,197,94,.35);
+  }
+  .step-label {
+    font-size: 10px; font-weight: 600; color: rgba(136,150,179,.5);
+    letter-spacing: .7px; text-transform: uppercase; transition: color .4s;
+  }
+  .step-item.active .step-label { color: var(--p1); }
+  .step-item.done .step-label { color: var(--ok); }
+  .step-connector {
+    flex: 1; height: 2px; margin: 0 10px 16px; border-radius: 99px;
+    background: rgba(255,255,255,.07); overflow: hidden; position: relative;
+  }
+  .step-connector-fill {
+    position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--ok), rgba(34,197,94,.5));
+    border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1);
+  }
+  .step-connector.done .step-connector-fill { width: 100%; }
+
+  .sep { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.07), transparent); margin: 0 0 24px; }
+
+  /* ── PALCO / PAINÉIS ── */
+  .stage { position: relative; overflow: hidden; transition: height .45s cubic-bezier(.4,0,.2,1); }
+  .panel { transition: all .45s cubic-bezier(.4,0,.2,1); }
+  .panel.hidden-left  { position: absolute; top: 0; left: 0; right: 0; opacity: 0; transform: translateX(-32px); pointer-events: none; }
+  .panel.hidden-right { position: absolute; top: 0; left: 0; right: 0; opacity: 0; transform: translateX(32px); pointer-events: none; }
+  .panel.visible { opacity: 1; transform: translateX(0); position: relative; }
+
+  /* ── EMBLEMA DE USUÁRIO ── */
+  .user-badge {
+    display: flex; align-items: center; gap: 12px;
+    background: linear-gradient(135deg, rgba(61,139,255,.08), rgba(124,92,255,.06));
+    border: 1px solid rgba(61,139,255,.2);
+    border-radius: 14px; padding: 12px 14px; margin-bottom: 20px;
+    animation: badgePop .5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes badgePop {
+    from { opacity: 0; transform: scale(.88) translateY(-8px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .badge-avatar {
+    width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--p1), var(--p2));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px rgba(61,139,255,.35);
+  }
+  .badge-avatar svg { width: 18px; height: 18px; color: #fff; }
+  .badge-info { flex: 1; min-width: 0; }
+  .badge-name { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .badge-sub { font-size: 11px; color: var(--ok); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+  .badge-sub::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 5px var(--ok); }
+  .change-btn {
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+    color: var(--sub); font-size: 11px; font-weight: 600; font-family: inherit;
+    padding: 5px 10px; border-radius: 7px; cursor: pointer; transition: all .2s; white-space: nowrap;
+  }
+  .change-btn:hover { background: rgba(61,139,255,.14); border-color: rgba(61,139,255,.35); color: var(--p1); }
+
+  .mac-field-wrap { animation: macReveal .5s cubic-bezier(.34,1.56,.64,1) .1s both; }
+  @keyframes macReveal {
+    from { opacity: 0; transform: translateY(16px) scale(.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  /* ── Indicador de etapas ── */
-  .progress {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0 0 26px;
-  }
-
-  .progress .dot {
-    width: 27px;
-    height: 27px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    background: var(--panel-2);
-    color: var(--text-faint);
-    border: 1px solid var(--border);
-    transition: all .35s var(--ease);
-  }
-
-  .progress .dot.active {
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-    color: #051024;
-    border-color: transparent;
-    transform: scale(1.06);
-  }
-
-  .progress .dot.done {
-    background: var(--ok);
-    color: #06281a;
-    border-color: transparent;
-  }
-
-  .progress .line {
-    flex: 1;
-    height: 2px;
-    background: var(--border-soft);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .progress .line > span {
-    display: block;
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--accent-1), var(--ok));
-    transition: width .5s var(--ease);
-  }
-
-  /* ── Etapas ── */
-  .step { display: none; }
-  .step.show { display: block; animation: rise .45s var(--ease) both; }
-
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: none; }
-  }
-
-  .field { animation: fieldIn .45s var(--ease) both; }
-  .field:nth-of-type(1) { animation-delay: .03s; }
-  .field:nth-of-type(2) { animation-delay: .09s; }
-
-  @keyframes fieldIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: none; }
-  }
+  /* ── CAMPOS ── */
+  .field { margin-bottom: 16px; animation: fieldIn .4s ease both; }
+  @keyframes fieldIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
   label {
-    display: block;
-    font-size: 12.5px;
-    font-weight: 500;
-    color: var(--text-dim);
-    margin: 16px 0 7px;
+    display: flex; align-items: center; gap: 7px;
+    font-size: 11px; font-weight: 600; color: var(--sub);
+    letter-spacing: .8px; text-transform: uppercase; margin-bottom: 8px;
   }
+  label svg { width: 13px; height: 13px; flex: none; }
 
   .input-wrap { position: relative; }
-
-  .input-wrap svg {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 17px;
-    height: 17px;
-    color: var(--text-faint);
-    transition: color .2s ease;
-    pointer-events: none;
+  .input-wrap svg.leading {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px; color: rgba(136,150,179,.55);
+    pointer-events: none; transition: color .2s ease;
   }
 
-  input[type="text"], input[type="password"] {
+  input {
     width: 100%;
-    padding: 13px 14px 13px 40px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border);
-    background: var(--panel-2);
-    color: var(--text);
-    font-family: inherit;
+    background: var(--ibg);
+    border: 1.5px solid rgba(255,255,255,.07);
+    border-radius: 12px;
+    padding: 13px 16px 13px 42px;
     font-size: 14px;
-    outline: none;
-    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
-  }
-
-  input::placeholder { color: var(--text-faint); }
-
-  input:focus {
-    border-color: var(--accent-1);
-    background: #0c1527;
-    box-shadow: 0 0 0 4px rgba(61, 139, 255, .14);
-  }
-
-  input:focus ~ svg { color: var(--accent-1); }
-
-  input.shake { animation: shake .4s ease; border-color: var(--err); }
-
-  @keyframes shake {
-    20%, 60% { transform: translateX(-5px); }
-    40%, 80% { transform: translateX(5px); }
-  }
-
-  /* ── Botões ── */
-  .btn {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    margin-top: 22px;
-    padding: 14px 16px;
-    border: none;
-    border-radius: var(--radius-md);
     font-family: inherit;
-    font-size: 14.5px;
-    font-weight: 700;
-    letter-spacing: .1px;
-    color: #051024;
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
-    box-shadow: 0 14px 30px -12px rgba(61, 139, 255, .55);
+    color: var(--text);
+    outline: none;
+    transition: border-color .25s, background .25s, box-shadow .25s, transform .2s;
+    letter-spacing: .3px;
+  }
+  input::placeholder { color: rgba(136,150,179,.4); }
+  input:focus {
+    border-color: rgba(61,139,255,.6);
+    background: rgba(61,139,255,.06);
+    box-shadow: 0 0 0 4px rgba(61,139,255,.12);
+    transform: translateY(-1px);
+  }
+  input:focus ~ svg.leading { color: var(--p1); }
+  input.shake { animation: shake .4s ease both; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
   }
 
-  .btn svg { width: 17px; height: 17px; }
-
-  .btn::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.35) 48%, transparent 66%);
-    transform: translateX(-120%);
-    transition: transform .6s ease;
+  /* ── BOTÃO ── */
+  .btn {
+    position: relative; overflow: hidden;
+    width: 100%; margin-top: 10px; padding: 14px;
+    background: linear-gradient(135deg, var(--p1) 0%, var(--p2) 100%);
+    color: #fff; border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 700; font-family: inherit;
+    letter-spacing: .5px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: opacity .2s, transform .15s, box-shadow .25s;
+    box-shadow: 0 6px 28px rgba(61,139,255,.35);
   }
+  .btn svg { width: 16px; height: 16px; }
+  .btn:hover { opacity: .93; box-shadow: 0 10px 40px rgba(61,139,255,.55); transform: translateY(-2px); }
+  .btn:active { transform: translateY(0) scale(.975); }
+  .btn:disabled { opacity: .38; cursor: not-allowed; transform: none; box-shadow: none; }
 
-  .btn:hover::before { transform: translateX(120%); }
-  .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 34px -10px rgba(61, 139, 255, .65); }
-  .btn:active { transform: translateY(0); }
-  .btn:disabled { opacity: .62; cursor: not-allowed; transform: none; box-shadow: none; }
-  .btn:disabled::before { display: none; }
+  .btn::after {
+    content: '';
+    position: absolute; top: 0; left: -120%; width: 70%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+    transform: skewX(-18deg); transition: left .7s ease;
+  }
+  .btn:not(:disabled):hover::after { left: 150%; }
 
   .ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255,255,255,.45);
-    transform: scale(0);
-    animation: rippleFx .6s ease-out;
-    pointer-events: none;
+    position: absolute; border-radius: 50%; background: rgba(255,255,255,.25);
+    transform: scale(0); animation: rippleAnim .55s linear; pointer-events: none;
   }
+  @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
 
-  @keyframes rippleFx { to { transform: scale(2.6); opacity: 0; } }
-
-  .spinner {
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    border: 2px solid rgba(5,16,36,.3);
-    border-top-color: #051024;
-    display: none;
-    animation: spin .7s linear infinite;
+  .spin {
+    width: 18px; height: 18px; flex-shrink: 0;
+    border: 2.5px solid rgba(255,255,255,.25); border-top-color: #fff;
+    border-radius: 50%; animation: rot .6s linear infinite; display: none;
   }
+  .spin.on { display: block; }
+  @keyframes rot { to { transform: rotate(360deg); } }
 
-  .spinner.on { display: inline-block; }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── Mensagens ── */
-  .msg {
-    margin-top: 15px;
-    padding: 12px 14px;
-    border-radius: var(--radius-md);
-    font-size: 13px;
-    line-height: 1.4;
-    display: none;
-    align-items: flex-start;
-    gap: 9px;
+  /* ── ALERTAS ── */
+  .alert {
+    margin-top: 16px; padding: 13px 16px; border-radius: 12px;
+    font-size: 13px; font-weight: 500; line-height: 1.55;
+    display: none; align-items: flex-start; gap: 10px;
   }
+  .alert.on { display: flex; animation: alertIn .35s cubic-bezier(.34,1.4,.64,1); }
+  @keyframes alertIn { from { opacity: 0; transform: translateY(-8px) scale(.97); } to { opacity: 1; transform: none; } }
+  .alert-ok  { background: rgba(34,197,94,.09);  border: 1px solid rgba(34,197,94,.22);  color: #4ade80; }
+  .alert-err { background: rgba(239,68,68,.09);  border: 1px solid rgba(239,68,68,.22);  color: #f87171; }
+  .alert svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 1px; }
 
-  .msg.show { display: flex; animation: rise .3s var(--ease) both; }
-  .msg svg { width: 17px; height: 17px; flex: none; margin-top: 1px; }
-  .msg.ok  { background: var(--ok-bg);  color: var(--ok);  border: 1px solid rgba(50, 217, 152, .25); }
-  .msg.err { background: var(--err-bg); color: var(--err); border: 1px solid rgba(255, 85, 112, .25); }
-
-  /* ── Identidade confirmada ── */
-  .identity {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 11px 13px;
-    border-radius: var(--radius-md);
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    margin-bottom: 2px;
-  }
-
-  .identity .avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    flex: none;
-    background: linear-gradient(135deg, var(--border-soft), var(--border));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .identity .avatar svg { width: 17px; height: 17px; color: var(--text-dim); }
-
-  .identity .who { flex: 1; min-width: 0; }
-  .identity .who strong {
-    display: block;
-    font-size: 13.5px;
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .identity .who span { font-size: 11.5px; color: var(--text-dim); }
+  /* ── EXPLOSÃO DE SUCESSO ── */
+  .burst { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 1px; height: 1px; pointer-events: none; z-index: 10; }
+  .burst-particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); animation: burstFly .7s ease-out both; }
+  @keyframes burstFly { from { opacity: 1; transform: translate(0,0) scale(1); } to { opacity: 0; transform: var(--tx) scale(0); } }
 
   .link-btn {
-    background: none;
-    border: none;
-    color: var(--accent-1);
-    font-size: 12px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    padding: 6px 4px;
+    background: none; border: none; color: var(--p1); font-size: 12px;
+    font-weight: 600; font-family: inherit; cursor: pointer; padding: 6px 4px;
     transition: opacity .15s ease;
   }
-
   .link-btn:hover { opacity: .75; }
 </style>
 </head>
 <body>
 
-<div class="aurora" aria-hidden="true">
-  <span class="a1"></span>
-  <span class="a2"></span>
-  <span class="a3"></span>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
+
+<div class="card" id="card">
+
+  <div class="header">
+    <div class="eyebrow">Painel de Ativação</div>
+    <div class="title">Ativação Bolt</div>
+  </div>
+
+  <!-- INDICADOR DE ETAPAS -->
+  <div class="steps">
+    <div class="step-item active" id="si1">
+      <div class="step-circle" id="sc1">1</div>
+      <div class="step-label">Credenciais</div>
+    </div>
+    <div class="step-connector" id="conn">
+      <div class="step-connector-fill" id="conn-fill"></div>
+    </div>
+    <div class="step-item" id="si2">
+      <div class="step-circle" id="sc2">2</div>
+      <div class="step-label">Dispositivo</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="stage" id="stage">
+
+    <!-- ETAPA 1: credenciais -->
+    <div class="panel visible" id="p1">
+      <div class="field" style="animation-delay:.05s">
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Usuário
+        </label>
+        <div class="input-wrap">
+          <input id="usr" placeholder="Ex: 584159825" autocomplete="off" spellcheck="false">
+          <svg class="leading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+      </div>
+      <div class="field" style="animation-delay:.1s">
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Senha
+        </label>
+        <div class="input-wrap">
+          <input type="password" id="pwd" placeholder="••••••••" autocomplete="new-password">
+          <svg class="leading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+      </div>
+      <div style="animation:fieldIn .4s ease .15s both">
+        <button class="btn" id="btn1" type="button">
+          <span>Continuar</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+      <div class="alert" id="al1">
+        <svg id="al1-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+        <span id="al1-msg"></span>
+      </div>
+    </div>
+
+    <!-- ETAPA 2: dispositivo -->
+    <div class="panel hidden-right" id="p2">
+      <div class="user-badge">
+        <div class="badge-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+        <div class="badge-info">
+          <div class="badge-name" id="badge-name">—</div>
+          <div class="badge-sub">Credenciais confirmadas</div>
+        </div>
+        <button class="change-btn" id="btnVoltar" type="button">Alterar</button>
+      </div>
+
+      <div class="mac-field-wrap">
+        <div class="field" style="margin-bottom:0">
+          <label>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 9h12M7 15h0M12 15h0M17 15h0"></path></svg>
+            Endereço MAC
+          </label>
+          <div class="input-wrap">
+            <input id="mac" placeholder="D0:CD:BF:2C:5C:D4" maxlength="17" autocomplete="off" spellcheck="false">
+            <svg class="leading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 9h12M7 15h0M12 15h0M17 15h0"></path></svg>
+          </div>
+        </div>
+        <button class="btn" id="btn2" type="button">
+          <div class="spin" id="spin2"></div>
+          <svg id="btn2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+          <span id="lbl2">Ativar dispositivo</span>
+        </button>
+      </div>
+
+      <div class="alert" id="al2">
+        <svg id="al2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+        <span id="al2-msg"></span>
+      </div>
+    </div>
+
+  </div><!-- /stage -->
 </div>
-<div class="grain" aria-hidden="true"></div>
-
-<main class="panel" id="panel">
-  <div class="brand">
-    <div class="brand-title">Ativação Bolt</div>
-    <div class="brand-sub">Ative seu dispositivo em instantes</div>
-  </div>
-
-  <div class="progress">
-    <div class="dot active" id="dot1">1</div>
-    <div class="line"><span id="lineFill"></span></div>
-    <div class="dot" id="dot2">2</div>
-  </div>
-
-  <!-- Etapa 1: credenciais -->
-  <div class="step show" id="step1">
-    <div class="field">
-      <label for="usuario">Usuário</label>
-      <div class="input-wrap">
-        <input type="text" id="usuario" autocomplete="off" spellcheck="false" placeholder="Seu usuário de acesso">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-      </div>
-    </div>
-
-    <div class="field">
-      <label for="senha">Senha</label>
-      <div class="input-wrap">
-        <input type="password" id="senha" autocomplete="new-password" placeholder="••••••••">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="10" rx="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-      </div>
-    </div>
-
-    <button class="btn" id="btnAvancar" type="button">
-      <span>Continuar</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-        <polyline points="12 5 19 12 12 19"></polyline>
-      </svg>
-    </button>
-
-    <div class="msg" id="msg1">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-      </svg>
-      <span id="msg1-text"></span>
-    </div>
-  </div>
-
-  <!-- Etapa 2: dispositivo -->
-  <div class="step" id="step2">
-    <div class="identity">
-      <div class="avatar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-      </div>
-      <div class="who">
-        <strong id="nomeUsuario">—</strong>
-        <span>Credenciais confirmadas</span>
-      </div>
-      <button class="link-btn" id="btnVoltar" type="button">Alterar</button>
-    </div>
-
-    <div class="field" style="margin-top:4px">
-      <label for="mac">Endereço MAC do dispositivo</label>
-      <div class="input-wrap">
-        <input type="text" id="mac" placeholder="00:1A:2B:3C:4D:5E" maxlength="17" autocomplete="off" spellcheck="false">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-          <path d="M7 15h0M12 15h0M17 15h0"></path>
-          <path d="M6 9h12"></path>
-        </svg>
-      </div>
-    </div>
-
-    <button class="btn" id="btnAtivar" type="button">
-      <span class="spinner" id="spinner"></span>
-      <svg id="btnAtivarIcon" viewBox="0 0 24 24" fill="none" stroke="#051024" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-        <polyline points="9 12 11 14 15 10"></polyline>
-      </svg>
-      <span id="btnAtivarLabel">Ativar dispositivo</span>
-    </button>
-
-    <div class="msg" id="msg2">
-      <svg id="msg2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-      </svg>
-      <span id="msg2-text"></span>
-    </div>
-  </div>
-</main>
 
 <script>
   // Credenciais da parceria. Ficam só aqui no código-fonte, nunca exibidas
@@ -521,161 +415,203 @@
   };
 </script>
 <script>
-(function () {
-  const ICON_OK  = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
-  const ICON_ERR = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
+  const ICON_WARN = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
+  const ICON_OK   = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+  const ICON_ERR  = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
+  const ICON_BOLT_OK = '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline>';
 
-  const usuarioEl = document.getElementById('usuario');
-  const senhaEl   = document.getElementById('senha');
-  const macEl     = document.getElementById('mac');
-
-  const step1 = document.getElementById('step1');
-  const step2 = document.getElementById('step2');
-  const dot1  = document.getElementById('dot1');
-  const dot2  = document.getElementById('dot2');
-  const lineFill = document.getElementById('lineFill');
-
-  function formatarMac(valor) {
-    const limpo = valor.replace(/[^a-fA-F0-9]/g, '').toUpperCase().slice(0, 12);
-    return limpo.match(/.{1,2}/g)?.join(':') || limpo;
-  }
-
-  macEl.addEventListener('input', () => {
-    macEl.value = formatarMac(macEl.value);
-  });
-
-  function mostrarMsg(el, tipo, texto, iconoEl) {
-    el.classList.remove('ok', 'err', 'show');
-    void el.offsetWidth;
-    el.classList.add(tipo, 'show');
-    if (iconoEl) iconoEl.innerHTML = tipo === 'ok' ? ICON_OK : ICON_ERR;
-    el.querySelector('span:last-child').textContent = texto;
-  }
-
-  function limparMsg(el) {
-    el.classList.remove('show', 'ok', 'err');
-  }
-
-  function marcarInvalido(el) {
-    el.classList.add('shake');
-    setTimeout(() => el.classList.remove('shake'), 400);
-  }
-
+  /* ── RIPPLE ── */
   function addRipple(btn, e) {
     const r = btn.getBoundingClientRect();
     const size = Math.max(r.width, r.height);
     const el = document.createElement('span');
     el.className = 'ripple';
-    el.style.width = el.style.height = size + 'px';
-    el.style.left = (e.clientX - r.left - size / 2) + 'px';
-    el.style.top = (e.clientY - r.top - size / 2) + 'px';
+    el.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px`;
     btn.appendChild(el);
     el.addEventListener('animationend', () => el.remove());
   }
 
-  document.getElementById('btnAvancar').addEventListener('click', (e) => {
-    addRipple(e.currentTarget, e);
-    const usuario = usuarioEl.value.trim();
-    const senha = senhaEl.value.trim();
-    const msg1 = document.getElementById('msg1');
+  /* ── FORMATAÇÃO DO MAC ── */
+  function fmtMAC(el) {
+    const v = el.value.replace(/[^a-fA-F0-9]/g, '').toUpperCase().slice(0, 12);
+    el.value = v.match(/.{1,2}/g)?.join(':') || v;
+  }
+  document.getElementById('mac').addEventListener('input', (e) => fmtMAC(e.target));
 
-    if (!usuario || !senha) {
-      mostrarMsg(msg1, 'err', 'Preencha usuário e senha.', msg1.querySelector('svg'));
-      if (!usuario) marcarInvalido(usuarioEl);
-      if (!senha) marcarInvalido(senhaEl);
+  /* ── ALERTAS ── */
+  function showAlert(id, type, iconSvg, msg) {
+    const el = document.getElementById(id);
+    el.className = 'alert';
+    void el.offsetWidth;
+    el.className = `alert on alert-${type}`;
+    document.getElementById(id + '-icon').innerHTML = iconSvg;
+    document.getElementById(id + '-msg').textContent = msg;
+  }
+  function clearAlert(id) { document.getElementById(id).className = 'alert'; }
+
+  /* ── TRANSIÇÃO ENTRE PAINÉIS ── */
+  function slideOut(el, dir) {
+    el.classList.remove('visible', 'hidden-left', 'hidden-right');
+    el.classList.add(dir === 'left' ? 'hidden-left' : 'hidden-right');
+  }
+  function slideIn(el, fromDir) {
+    el.classList.remove('visible', 'hidden-left', 'hidden-right');
+    el.classList.add(fromDir === 'left' ? 'hidden-left' : 'hidden-right');
+    void el.offsetWidth;
+    requestAnimationFrame(() => {
+      el.classList.remove('hidden-left', 'hidden-right');
+      el.classList.add('visible');
+    });
+  }
+
+  /* ── ETAPAS ── */
+  function setStepDone() {
+    document.getElementById('si1').className = 'step-item done';
+    document.getElementById('sc1').textContent = '✓';
+    document.getElementById('conn').classList.add('done');
+    document.getElementById('si2').className = 'step-item active';
+  }
+  function setStepBack() {
+    document.getElementById('si1').className = 'step-item active';
+    document.getElementById('sc1').textContent = '1';
+    document.getElementById('conn').classList.remove('done');
+    document.getElementById('si2').className = 'step-item';
+  }
+
+  /* ── CONTINUAR ── */
+  document.getElementById('btn1').addEventListener('click', (e) => {
+    addRipple(e.currentTarget, e);
+    const usr = document.getElementById('usr').value.trim();
+    const pwd = document.getElementById('pwd').value.trim();
+
+    if (!usr || !pwd) {
+      showAlert('al1', 'err', ICON_WARN, 'Preencha usuário e senha.');
+      if (!usr) { const el = document.getElementById('usr'); el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 400); }
+      if (!pwd) { const el = document.getElementById('pwd'); el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 400); }
       return;
     }
+    clearAlert('al1');
+    document.getElementById('badge-name').textContent = usr;
+    setStepDone();
 
-    limparMsg(msg1);
-    document.getElementById('nomeUsuario').textContent = usuario;
+    const stage = document.getElementById('stage');
+    const p1 = document.getElementById('p1');
+    const p2 = document.getElementById('p2');
+    stage.style.height = p1.offsetHeight + 'px';
 
-    step1.classList.remove('show');
-    step2.classList.add('show');
-    dot1.classList.add('done');
-    dot1.textContent = '✓';
-    dot2.classList.add('active');
-    lineFill.style.width = '100%';
+    slideOut(p1, 'left');
+    slideIn(p2, 'right');
 
-    macEl.focus();
+    setTimeout(() => {
+      stage.style.height = p2.offsetHeight + 'px';
+      setTimeout(() => { stage.style.height = ''; }, 460);
+      document.getElementById('mac').focus();
+    }, 60);
   });
 
+  /* ── VOLTAR ── */
   document.getElementById('btnVoltar').addEventListener('click', () => {
-    limparMsg(document.getElementById('msg2'));
-    macEl.value = '';
+    clearAlert('al2');
+    document.getElementById('mac').value = '';
+    setStepBack();
 
-    step2.classList.remove('show');
-    step1.classList.add('show');
-    dot1.classList.remove('done');
-    dot1.textContent = '1';
-    dot2.classList.remove('active');
-    lineFill.style.width = '0%';
+    const stage = document.getElementById('stage');
+    const p1 = document.getElementById('p1');
+    const p2 = document.getElementById('p2');
+    stage.style.height = p2.offsetHeight + 'px';
 
-    usuarioEl.focus();
+    slideOut(p2, 'right');
+    slideIn(p1, 'left');
+
+    setTimeout(() => {
+      stage.style.height = p1.offsetHeight + 'px';
+      setTimeout(() => { stage.style.height = ''; }, 460);
+      document.getElementById('usr').focus();
+    }, 60);
   });
 
-  document.getElementById('btnAtivar').addEventListener('click', async (e) => {
+  /* ── EXPLOSÃO DE SUCESSO ── */
+  function burst() {
+    const card = document.getElementById('card');
+    const b = document.createElement('div');
+    b.className = 'burst';
+    b.style.top = '50%';
+    b.style.left = '50%';
+    const angles = [0, 45, 90, 135, 180, 225, 270, 315];
+    angles.forEach((a, i) => {
+      const p = document.createElement('div');
+      p.className = 'burst-particle';
+      const rad = a * Math.PI / 180;
+      const d = 55 + Math.random() * 30;
+      p.style.setProperty('--tx', `translate(${Math.cos(rad) * d}px,${Math.sin(rad) * d}px)`);
+      p.style.animationDelay = `${i * 0.03}s`;
+      b.appendChild(p);
+    });
+    card.appendChild(b);
+    setTimeout(() => b.remove(), 900);
+  }
+
+  /* ── ATIVAR ── */
+  document.getElementById('btn2').addEventListener('click', async (e) => {
     addRipple(e.currentTarget, e);
-    const usuario = usuarioEl.value.trim();
-    const senha = senhaEl.value.trim();
-    const mac = macEl.value.trim();
-    const msg2 = document.getElementById('msg2');
-    const msg2icon = document.getElementById('msg2-icon');
+    const mac = document.getElementById('mac').value.trim();
+    const usr = document.getElementById('usr').value.trim();
+    const pwd = document.getElementById('pwd').value.trim();
 
     if (!mac) {
-      mostrarMsg(msg2, 'err', 'Informe o endereço MAC do dispositivo.', msg2icon);
-      marcarInvalido(macEl);
+      showAlert('al2', 'err', ICON_WARN, 'Informe o endereço MAC.');
+      const el = document.getElementById('mac');
+      el.classList.add('shake');
+      setTimeout(() => el.classList.remove('shake'), 400);
       return;
     }
+    clearAlert('al2');
 
-    limparMsg(msg2);
-
-    const btn = document.getElementById('btnAtivar');
-    const spinner = document.getElementById('spinner');
-    const icon = document.getElementById('btnAtivarIcon');
-    const label = document.getElementById('btnAtivarLabel');
-
+    const btn = document.getElementById('btn2');
+    const spin = document.getElementById('spin2');
+    const icon = document.getElementById('btn2-icon');
+    const lbl = document.getElementById('lbl2');
     btn.disabled = true;
-    spinner.classList.add('on');
+    spin.classList.add('on');
     icon.style.display = 'none';
-    label.textContent = 'Ativando...';
+    lbl.textContent = 'Ativando...';
 
     try {
-      const resp = await fetch(window.PARCERIA.endpoint, {
+      const r = await fetch(window.PARCERIA.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          usuario,
-          senha,
           mac,
+          usuario: usr,
+          senha: pwd,
           codigo: window.PARCERIA.codigo,
           token: window.PARCERIA.token
         })
       });
-      const dados = await resp.json();
-
-      if (dados.ok) {
-        mostrarMsg(msg2, 'ok', dados.mensagem || 'Dispositivo ativado com sucesso.', msg2icon);
-        macEl.value = '';
+      const d = await r.json();
+      if (d.ok) {
+        burst();
+        showAlert('al2', 'ok', ICON_OK, d.mensagem || 'Dispositivo ativado com sucesso.');
+        document.getElementById('mac').value = '';
       } else {
-        mostrarMsg(msg2, 'err', dados.mensagem || 'Não foi possível ativar o dispositivo.', msg2icon);
+        showAlert('al2', 'err', ICON_ERR, d.mensagem || 'Não foi possível ativar o dispositivo.');
       }
-    } catch (e) {
-      mostrarMsg(msg2, 'err', 'Erro ao comunicar com o servidor.', msg2icon);
+    } catch {
+      showAlert('al2', 'err', ICON_ERR, 'Erro ao comunicar com o servidor.');
     }
 
     btn.disabled = false;
-    spinner.classList.remove('on');
+    spin.classList.remove('on');
     icon.style.display = '';
-    label.textContent = 'Ativar dispositivo';
+    lbl.textContent = 'Ativar dispositivo';
   });
 
+  /* ── ENTER ── */
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
-    if (step1.classList.contains('show')) document.getElementById('btnAvancar').click();
-    else if (step2.classList.contains('show')) document.getElementById('btnAtivar').click();
+    if (document.getElementById('p1').classList.contains('visible')) document.getElementById('btn1').click();
+    else if (document.getElementById('p2').classList.contains('visible')) document.getElementById('btn2').click();
   });
-})();
 </script>
-
 </body>
 </html>
