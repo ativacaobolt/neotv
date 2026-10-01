@@ -123,42 +123,25 @@
   }
 
   .brand {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    margin-bottom: 26px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-soft);
   }
-
-  .brand-mark {
-    width: 46px;
-    height: 46px;
-    flex: none;
-    border-radius: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
-    box-shadow: 0 10px 24px -6px rgba(61, 139, 255, .5);
-    animation: glow 3.2s ease-in-out infinite;
-  }
-
-  @keyframes glow {
-    0%, 100% { box-shadow: 0 10px 24px -6px rgba(61, 139, 255, .5); }
-    50%      { box-shadow: 0 10px 32px -4px rgba(124, 92, 255, .7); }
-  }
-
-  .brand-mark svg { width: 22px; height: 22px; }
 
   .brand-title {
     font-weight: 800;
-    font-size: 17px;
-    letter-spacing: -.1px;
+    font-size: 20px;
+    letter-spacing: -.2px;
+    background: linear-gradient(135deg, var(--text), var(--accent-1));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   .brand-sub {
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--text-dim);
-    margin-top: 1px;
+    margin-top: 4px;
   }
 
   /* ── Indicador de etapas ── */
@@ -428,15 +411,8 @@
 
 <main class="panel" id="panel">
   <div class="brand">
-    <div class="brand-mark" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#051024" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="13 2 3 14 11 14 10 22 21 10 13 10 13 2"></polygon>
-      </svg>
-    </div>
-    <div>
-      <div class="brand-title">Ativação Bolt</div>
-      <div class="brand-sub">Ative seu dispositivo em instantes</div>
-    </div>
+    <div class="brand-title">Ativação Bolt</div>
+    <div class="brand-sub">Ative seu dispositivo em instantes</div>
   </div>
 
   <div class="progress">
@@ -518,7 +494,8 @@
     <button class="btn" id="btnAtivar" type="button">
       <span class="spinner" id="spinner"></span>
       <svg id="btnAtivarIcon" viewBox="0 0 24 24" fill="none" stroke="#051024" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="13 2 3 14 11 14 10 22 21 10 13 10 13 2"></polygon>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <polyline points="9 12 11 14 15 10"></polyline>
       </svg>
       <span id="btnAtivarLabel">Ativar dispositivo</span>
     </button>
